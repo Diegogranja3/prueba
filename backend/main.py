@@ -1,12 +1,11 @@
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv 
 import google.generativeai as genai
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from database import notasDB, get_db, Base, engine
-from pydantic import BaseModel
 from typing import Optional
 
 app = FastAPI()
@@ -43,8 +42,7 @@ class NotaSchema(BaseModel):
     etiqueta2: Optional[str] = ''
     etiqueta3: Optional[str] = ''
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)  #
 
 @app.post("/preguntar_gemini/")
 def preguntar_gemini(pregunta: Pregunta):

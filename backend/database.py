@@ -7,11 +7,12 @@ import os
 # Cargar variables del .env
 load_dotenv()
 
-# Leer la URL de la base de datos
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Usar SQLite en lugar de MySQL
+# En desarrollo local y producción usará SQLite
+DATABASE_URL = "sqlite:///./notas.db"
 
-# Crear el engine
-engine = create_engine(DATABASE_URL)
+# Crear el engine con configuración para SQLite
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
 # Crear la sesión
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -37,3 +38,6 @@ class notasDB(Base):
     etiqueta1 = Column(String(512), nullable=False)
     etiqueta2 = Column(String(512), nullable=False)
     etiqueta3 = Column(String(512), nullable=False)
+
+# Crear todas las tablas
+Base.metadata.create_all(bind=engine)
