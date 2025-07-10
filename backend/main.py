@@ -5,7 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from database import notasDB, get_db, Base, engine
+from .database import notasDB, get_db, Base, engine
 from pydantic import BaseModel
 from typing import Optional
 
