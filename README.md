@@ -8,23 +8,23 @@ Una aplicación web tipo diario personal con inteligencia artificial integrada q
 - Cuenta en [Google AI Studio](https://aistudio.google.com/) para la API Key
    
 # Instrucciones para ejecutarse
-1.- Clonar el proyecto
+- Clonar el proyecto
     git clone https://github.com/tu-usuario/tu-repo.git
-2.- Instalar las dependencias necesarias (backend/requeriments.txt)
+- Instalar las dependencias necesarias (backend/requeriments.txt)
     fastapi==0.116.0
     pydantic==2.11.7
     python-dotenv==1.1.1
     SQLAlchemy==2.0.41
     uvicorn[standard]==0.24.0
     google-generativeai==0.8.3
-3.- Abrir una terminal dentro de la carpeta backend y ejecutar
+- Abrir una terminal dentro de la carpeta backend y ejecutar
     uvicorn main:app --reload
-4.- Abrir una terminal dentro de la carpeta frontend y ejecutar
+- Abrir una terminal dentro de la carpeta frontend y ejecutar
     npm run dev
-5.- Generar una API key para Gemini en Google studio AI
-6.- Ingresar la API key en un archivo .env con el siguiente formato
+- Generar una API key para Gemini en Google studio AI
+- Ingresar la API key en un archivo .env con el siguiente formato
     GEMINI_API_KEY= tu_api_key
-7.- El programa deberia funcionar
+- El programa deberia funcionar
 
 # Características
 - Un usuario puede guardar sus ideas y posteriormente editarlas
