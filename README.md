@@ -1,7 +1,7 @@
 # Diario Inteligente con IA
 
 Version de prueba: https://prueba-frontend-xqga.onrender.com/
-
+***Si aparece Ocurrió un error al procesar con IA.  es probable que ya no haya mas solicitudes gratuitas ***
 
 Una aplicación web tipo diario personal con inteligencia artificial integrada que enriquece las entradas del usuario.
 
