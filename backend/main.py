@@ -17,7 +17,7 @@ genai.configure(api_key=api_key)
 # ⚠️ IMPORTANTE: permite el origen del frontend (Vue)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # o ["*"] para permitir todo (no recomendado en producción)
+    allow_origins=["*"],  # o ["*"] para permitir todo (no recomendado en producción)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
