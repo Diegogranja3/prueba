@@ -6,9 +6,70 @@
       <p class="text-white text-3xl">Esperando IA...</p>
       <div class="loader"></div>
     </div>
+<!-- Botón SVG -->
+<div
+  class="block sm:hidden fixed right-0 p-4 rounded-bl-3xl bg-blue-800 z-50"
+  @click="nueva()"
+>
+<svg class="size-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 12H20M12 4V20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+</div>
+
+<div
+  class="block sm:hidden fixed left-0 p-4 rounded-br-3xl bg-blue-800 z-50"
+  @click="mostrarMenu = true"
+>
+  <svg class="size-6" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="#ffffff">
+    <!-- SVG content -->
+    <circle cx="8" cy="24" r="6"></circle>
+    <circle cx="24" cy="24" r="6"></circle>
+    <circle cx="40" cy="24" r="6"></circle>
+  </svg>
+</div>
+
+<!-- Capa negra -->
+<div
+  v-if="mostrarMenu"
+  class="fixed inset-0 bg-black/60 z-40"
+  @click="mostrarMenu = false"
+></div>
+
+<!-- Menú lateral derecho -->
+<div
+  v-if="mostrarMenu"
+  class="fixed top-0 left-0 w-3/4 h-full bg-black z-50"
+  @click.stop
+>
+<div
+  v-for="nota in notasFiltradas"
+  :key="nota.id"
+  class="m-5 cursor-pointer group relative"
+  @click="seleccionarNota(nota)"
+>
+  <!-- Botón sobrepuesto (solo aparece en hover) -->
+  <div
+    @click.stop="eliminar(nota)"
+    class="absolute top-2 right-2 bg-fuchsia-700 text-white text-sm px-3 py-1 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200"
+  >
+    <svg class="size-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M14 10V17M10 10V17" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+      </div>
+
+  <div class="p-4 hover:bg-fuchsia-900 transition border-b-2 border-amber-50">
+    <div class="flex justify-between ">
+      <p class="font-bold text-white text-lg">{{ nota.titulo }}</p>
+      <p v-if="nota.ia" class="text-fuchsia-700">IA</p>
+    </div>
+    <p>
+      {{ nota.descripcion.length > 100
+        ? nota.descripcion.slice(0, 100) + '...'
+        : nota.descripcion }}
+    </p>
+    <p class="mt-2 italic text-gray-400 line-clamp-2">{{ nota.ia }}</p>
+  </div>
+</div>
+</div>
 
   <div class="min-h-screen bg-gray-950 text-white grid md:grid-cols-10">
-    <div class="max-h-screen sm:col-span-1 md:col-span-5 xl:col-span-3 border-r-2 m-4 border-r-gray-800 overflow-y-auto scrollbar-thin scrollbar-thumb-fuchsia-600 scrollbar-track-gray-900">
+    <div class="hidden md:block max-h-screen sm:col-span-1 md:col-span-5 xl:col-span-3 border-r-2 m-4 border-r-gray-800 overflow-y-auto scrollbar-thin scrollbar-thumb-fuchsia-600 scrollbar-track-gray-900">
         <p class="text-2xl mx-2">Ideas</p>
                 <div class="flex gap-4 mx-5 h-10 mt-5">
           <div :disabled="!cargandoIA" @click="nueva()" class="flex justify-center items-center gap-4 bg-fuchsia-700   rounded-xl w-1/2">
@@ -96,7 +157,7 @@
       </div>
     <div class="sm:col-span-9 md:col-span-5 xl:col-span-6">
       <div v-if="!notaSeleccionada" class="m-5">
-        <p class="text-3xl">¿Tienes algo nuevo en mente?</p>
+        <p class="text-2xl sm:text-3xl mt-20 sm:mt-0">¿Tienes algo nuevo en mente?</p>
         <form class="mx-10 mt-10" @submit.prevent="guardarIdea">
           <div class="flex flex-col gap-4">
             <div>
@@ -157,7 +218,7 @@
         </form>
       </div>
       <div class="m-5" v-if="notaSeleccionada">
-          <p class="text-3xl">Mira esta idea</p>
+          <p class="text-3xl mt-20">Mira esta idea</p>
         <form class="mx-10 mt-10" @submit.prevent="guardarIdea">
           <div class="flex flex-col gap-4">
             <div>
@@ -246,6 +307,7 @@
 
 </style>
 
+
 <script>
 import axios from 'axios'
 
@@ -262,102 +324,72 @@ export default {
       mod:false,
       notaSeleccionada: null,
       busqueda:false,
-      filtros: {
-        titulo: '',
-        descripcion: '',
-        ia: '',
-        etiquetasSeleccionadas: []
-      }
-    }
-  },
-  computed: {
-    baseURL() {
-      // Detecta automáticamente el entorno
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:8000'
-        : 'https://prueba-backend-zses.onrender.com'
-    },
-    notasFiltradas() {
-      return this.notas.filter(nota => {
-        const coincideTitulo = nota.titulo.toLowerCase().includes(this.filtros.titulo.toLowerCase())
-        const coincideDescripcion = nota.descripcion.toLowerCase().includes(this.filtros.descripcion.toLowerCase())
-        const coincideIA = (nota.ia || '').toLowerCase().includes(this.filtros.ia.toLowerCase())
-
-        const etiquetasNota = [nota.etiqueta1, nota.etiqueta2, nota.etiqueta3]
-          .filter(Boolean)
-          .map(e => e.toLowerCase())
-
-        const etiquetasSeleccionadas = this.filtros.etiquetasSeleccionadas.map(e => e.toLowerCase())
-
-        const coincideEtiquetas = etiquetasSeleccionadas.every(e => etiquetasNota.includes(e))
-
-        return coincideTitulo && coincideDescripcion && coincideIA && coincideEtiquetas
-      })
-    },
-    etiquetasUnicas() {
-      const etiquetas = new Set()
-      this.notas.forEach(nota => {
-        if (nota.etiqueta1) etiquetas.add(nota.etiqueta1)
-        if (nota.etiqueta2) etiquetas.add(nota.etiqueta2)
-        if (nota.etiqueta3) etiquetas.add(nota.etiqueta3)
-      })
-      return Array.from(etiquetas)
+      mostrarMenu: false,
+ filtros: {
+  titulo: '',
+  descripcion: '',
+  ia: '',
+  etiquetasSeleccionadas: []
+}
     }
   },
   methods: {
-    extraerHashtags(texto) {
-      return texto.match(/#[\p{L}\p{N}_]+/gu) || []
-    },
-    async guardarIdea() {
-      try {
-        if (this.notaSeleccionada) {
-          // Está editando una nota existente
-          await this.actualizarNota()
-        } else {
-          // Está creando una nueva nota
-          const res = await axios.post(`${this.baseURL}/guardar_nota/`, {
-            titulo: this.titulo,
-            descripcion: this.descripcion,
-            ia: this.informacionRelacionada,
-            etiqueta1: this.hashtags[0] || '',
-            etiqueta2: this.hashtags[1] || '',
-            etiqueta3: this.hashtags[2] || ''
-          })
+extraerHashtags(texto) {
+  return texto.match(/#[\p{L}\p{N}_]+/gu) || []
+},
+async guardarIdea() {
+  try {
+    if (this.notaSeleccionada) {
+      // Está editando una nota existente
+      await this.actualizarNota()
+    } else {
+      // Está creando una nueva nota
+      const res = await axios.post('http://localhost:8000/guardar_nota/', {
+        titulo: this.titulo,
+        descripcion: this.descripcion,
+        ia: this.informacionRelacionada,
+        etiqueta1: this.hashtags[0] || '',
+        etiqueta2: this.hashtags[1] || '',
+        etiqueta3: this.hashtags[2] || ''
+      })
 
-          console.log('Respuesta:', res.data)
-          alert('Idea guardada correctamente')
-          this.titulo = ''
-          this.descripcion = ''
-          this.informacionRelacionada = ''
-          this.hashtags = []
-        }
-      } catch (err) {
-        console.error('Error al guardar idea:', err)
-        alert('Error al guardar la idea')
-      }
-      this.cargarNotas()
-    },
-    async actualizarNota() {
-      try {
-        const nota = this.notaSeleccionada
-        await axios.put(`${this.baseURL}/editar_nota/${nota.id}`, {
-          titulo: nota.titulo,
-          descripcion: nota.descripcion,
-          ia: this.informacionRelacionada || nota.ia,
-          etiqueta1: nota.etiqueta1 || '',
-          etiqueta2: nota.etiqueta2 || '',
-          etiqueta3: nota.etiqueta3 || ''
-        })
+      console.log('Respuesta:', res.data)
+      alert('Idea guardada correctamente')
+      this.titulo = ''
+      this.descripcion = ''
+      this.informacionRelacionada = ''
+      this.hashtags = []
+    }
+  } catch (err) {
+    console.error('Error al guardar idea:', err)
+    alert('Error al guardar la idea')
+  }
+  this.cargarNotas()
+},
+async actualizarNota() {
+  try {
+    const nota = this.notaSeleccionada
+    await axios.put(`http://localhost:8000/editar_nota/${nota.id}`, {
+      titulo: nota.titulo,
+      descripcion: nota.descripcion,
+      ia: this.informacionRelacionada || nota.ia,
+      etiqueta1: nota.etiqueta1 || '',
+      etiqueta2: nota.etiqueta2 || '',
+      etiqueta3: nota.etiqueta3 || ''
+    })
 
-        alert('Nota actualizada correctamente')
-        this.notaSeleccionada = null
-        this.informacionRelacionada= ''
-        this.cargarNotas()
-      } catch (err) {
-        console.error('Error al actualizar nota:', err)
-        alert('Error al actualizar la nota')
-      }
-    },
+    alert('Nota actualizada correctamente')
+    this.notaSeleccionada = null
+    this.informacionRelacionada= ''
+    this.cargarNotas()
+  } catch (err) {
+    console.error('Error al actualizar nota:', err)
+    alert('Error al actualizar la nota')
+  }
+},
+
+
+
     iniciarTemporizador() {
       if (this.temporizador) clearTimeout(this.temporizador)
 
@@ -367,48 +399,50 @@ export default {
     },
     async cargarNotas() {
       try {
-        const res = await axios.get(`${this.baseURL}/notas/`)
+        const res = await axios.get('http://localhost:8000/notas/')
         this.notas = res.data
       } catch (error) {
         console.error('Error al cargar notas:', error)
       }
     },
-    nueva() {
-      this.mod = true
-      this.notaSeleccionada = null
-      this.busqueda=null
-    },
-    buscar() {
-      if (this.busqueda) {
-        this.busqueda = false
-        this.filtros = {
-          titulo: '',
-          descripcion: '',
-          ia: '',
-          etiquetasSeleccionadas: []
-        }
-      } else {
-        this.busqueda = true
-        this.mod = null
-      }
-    },
-    async eliminar(nota) {
-      console.log('ID a eliminar:', nota.id)
-      const confirmar = confirm(`¿Eliminar la idea "${nota.titulo}"?`)
-      if (!confirmar) return
+nueva() {
+  this.mod = true
+  this.notaSeleccionada = null
+  this.busqueda=null
+},
+buscar() {
+if (this.busqueda) {
+  this.busqueda = false
+  this.filtros = {
+    titulo: '',
+    descripcion: '',
+    ia: '',
+    etiquetasSeleccionadas: [],
+  }
+} else {
+  this.busqueda = true
+  this.mod = null
+}
 
-      try {
-        await axios.delete(`${this.baseURL}/eliminar_nota/${nota.id}`)
-        this.cargarNotas()
-        if (this.notaSeleccionada?.id === nota.id) {
-          this.notaSeleccionada = null
-        }
-      } catch (error) {
-        console.error('Error al eliminar la nota:', error)
-        alert('No se pudo eliminar la idea.')
-      }
-    },
-    seleccionarNota(nota) {
+},
+async eliminar(nota) {
+  console.log('ID a eliminar:', nota.id)
+  const confirmar = confirm(`¿Eliminar la idea "${nota.titulo}"?`)
+  if (!confirmar) return
+
+  try {
+    await axios.delete(`http://localhost:8000/eliminar_nota/${nota.id}`)
+    this.cargarNotas()
+    if (this.notaSeleccionada?.id === nota.id) {
+      this.notaSeleccionada = null
+    }
+  } catch (error) {
+    console.error('Error al eliminar la nota:', error)
+    alert('No se pudo eliminar la idea.')
+  }
+},
+
+     seleccionarNota(nota) {
       this.notaSeleccionada = { ...nota } // clona para evitar mutar directamente
     },
     async generarInformacionIA() {
@@ -430,7 +464,7 @@ export default {
     Descripción: ${this.descripcion || "Ninguna"}`
 
       try {
-        const res = await axios.post(`${this.baseURL}/preguntar_gemini/`, {
+        const res = await axios.post('http://localhost:8000/preguntar_gemini/', {
           mensaje: mensaje
         })
 
@@ -474,7 +508,7 @@ export default {
     Descripción: ${nota.descripcion || "Ninguna"}`
 
       try {
-        const res = await axios.post(`${this.baseURL}/preguntar_gemini/`, {
+        const res = await axios.post('http://localhost:8000/preguntar_gemini/', {
           mensaje: mensaje
         })
 
@@ -498,10 +532,40 @@ export default {
       }
     }
   },
-  mounted() {
+    mounted() {
     this.cargarNotas()
+  },
+ computed: {
+  notasFiltradas() {
+    return this.notas.filter(nota => {
+      const coincideTitulo = nota.titulo.toLowerCase().includes(this.filtros.titulo.toLowerCase())
+      const coincideDescripcion = nota.descripcion.toLowerCase().includes(this.filtros.descripcion.toLowerCase())
+      const coincideIA = (nota.ia || '').toLowerCase().includes(this.filtros.ia.toLowerCase())
+
+      const etiquetasNota = [nota.etiqueta1, nota.etiqueta2, nota.etiqueta3]
+        .filter(Boolean)
+        .map(e => e.toLowerCase())
+
+      const etiquetasSeleccionadas = this.filtros.etiquetasSeleccionadas.map(e => e.toLowerCase())
+
+      const coincideEtiquetas = etiquetasSeleccionadas.every(e => etiquetasNota.includes(e))
+
+      return coincideTitulo && coincideDescripcion && coincideIA && coincideEtiquetas
+    })
+  },
+  etiquetasUnicas() {
+    const etiquetas = new Set()
+    this.notas.forEach(nota => {
+      if (nota.etiqueta1) etiquetas.add(nota.etiqueta1)
+      if (nota.etiqueta2) etiquetas.add(nota.etiqueta2)
+      if (nota.etiqueta3) etiquetas.add(nota.etiqueta3)
+    })
+    return Array.from(etiquetas)
   }
 }
+
+}
+
 </script>
 <style scoped>
 /* Loader CSS simple: spinner */

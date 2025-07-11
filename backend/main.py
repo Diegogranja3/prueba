@@ -11,24 +11,13 @@ from typing import Optional
 app = FastAPI()
 load_dotenv()
 
-# Crear las tablas automáticamente
-Base.metadata.create_all(bind=engine)
-
-# Configurar Gemini API
 api_key = os.getenv("GEMINI_API_KEY")
-if not api_key:
-    raise Exception("GEMINI_API_KEY no encontrada en variables de entorno")
-
 genai.configure(api_key=api_key)
 
-# CORS configurado para producción
+# ⚠️ IMPORTANTE: permite el origen del frontend (Vue)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://prueba-frontend-xqga.onrender.com",  # Tu frontend
-        "http://localhost:5173",                      # Para desarrollo
-        "http://localhost:3000",                      # Por si usas otro puerto
-    ],
+    allow_origins=["http://localhost:5173"],  # o ["*"] para permitir todo (no recomendado en producción)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,23 +42,19 @@ class NotaSchema(BaseModel):
     etiqueta2: Optional[str] = ''
     etiqueta3: Optional[str] = ''
 
-    model_config = ConfigDict(from_attributes=True)
-
-@app.get("/")
-def health_check():
-    return {"message": "API funcionando correctamente", "status": "ok"}
+    model_config = ConfigDict(from_attributes=True)  #
 
 @app.post("/preguntar_gemini/")
 def preguntar_gemini(pregunta: Pregunta):
-    print("Mensaje recibido:", pregunta.mensaje)
+    print("Mensaje recibido:", pregunta.mensaje)  # <--- Agregado
 
     try:
         model = genai.GenerativeModel("models/gemini-2.5-pro")
         response = model.generate_content(pregunta.mensaje)
-        print("Respuesta IA:", response.text)
+        print("Respuesta IA:", response.text)  # <--- Agregado
         return {"respuesta": response.text}
     except Exception as e:
-        print("ERROR AL PROCESAR:", str(e))
+        print("ERROR AL PROCESAR:", str(e))  # <--- Agregado
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/guardar_nota/")
