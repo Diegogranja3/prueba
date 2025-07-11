@@ -321,74 +321,73 @@ export default {
       cargandoIA: false, // Controla el skeleton
       hashtags: [],
       notas: [],
-      mod:false,
+      mod: false,
       notaSeleccionada: null,
-      busqueda:false,
+      busqueda: false,
       mostrarMenu: false,
- filtros: {
-  titulo: '',
-  descripcion: '',
-  ia: '',
-  etiquetasSeleccionadas: []
-}
+      filtros: {
+        titulo: '',
+        descripcion: '',
+        ia: '',
+        etiquetasSeleccionadas: []
+      },
+      backendUrl: 'https://prueba-backend-zses.onrender.com'
     }
   },
   methods: {
-extraerHashtags(texto) {
-  return texto.match(/#[\p{L}\p{N}_]+/gu) || []
-},
-async guardarIdea() {
-  try {
-    if (this.notaSeleccionada) {
-      // Está editando una nota existente
-      await this.actualizarNota()
-    } else {
-      // Está creando una nueva nota
-      const res = await axios.post('http://localhost:8000/guardar_nota/', {
-        titulo: this.titulo,
-        descripcion: this.descripcion,
-        ia: this.informacionRelacionada,
-        etiqueta1: this.hashtags[0] || '',
-        etiqueta2: this.hashtags[1] || '',
-        etiqueta3: this.hashtags[2] || ''
-      })
+    extraerHashtags(texto) {
+      return texto.match(/#[\p{L}\p{N}_]+/gu) || []
+    },
+    async guardarIdea() {
+      try {
+        if (this.notaSeleccionada) {
+          // Está editando una nota existente
+          await this.actualizarNota()
+        } else {
+          // Está creando una nueva nota
+          const res = await axios.post(`${this.backendUrl}/guardar_nota/`, {
+            titulo: this.titulo,
+            descripcion: this.descripcion,
+            ia: this.informacionRelacionada,
+            etiqueta1: this.hashtags[0] || '',
+            etiqueta2: this.hashtags[1] || '',
+            etiqueta3: this.hashtags[2] || ''
+          })
 
-      console.log('Respuesta:', res.data)
-      alert('Idea guardada correctamente')
-      this.titulo = ''
-      this.descripcion = ''
-      this.informacionRelacionada = ''
-      this.hashtags = []
-    }
-  } catch (err) {
-    console.error('Error al guardar idea:', err)
-    alert('Error al guardar la idea')
-  }
-  this.cargarNotas()
-},
-async actualizarNota() {
-  try {
-    const nota = this.notaSeleccionada
-    await axios.put(`http://localhost:8000/editar_nota/${nota.id}`, {
-      titulo: nota.titulo,
-      descripcion: nota.descripcion,
-      ia: this.informacionRelacionada || nota.ia,
-      etiqueta1: nota.etiqueta1 || '',
-      etiqueta2: nota.etiqueta2 || '',
-      etiqueta3: nota.etiqueta3 || ''
-    })
+          console.log('Respuesta:', res.data)
+          alert('Idea guardada correctamente')
+          this.titulo = ''
+          this.descripcion = ''
+          this.informacionRelacionada = ''
+          this.hashtags = []
+        }
+      } catch (err) {
+        console.error('Error al guardar idea:', err)
+        alert('Error al guardar la idea')
+      }
+      this.cargarNotas()
+    },
+    async actualizarNota() {
+      try {
+        const nota = this.notaSeleccionada
+        await axios.put(`${this.backendUrl}/editar_nota/${nota.id}`, {
+          titulo: nota.titulo,
+          descripcion: nota.descripcion,
+          ia: this.informacionRelacionada || nota.ia,
+          etiqueta1: nota.etiqueta1 || '',
+          etiqueta2: nota.etiqueta2 || '',
+          etiqueta3: nota.etiqueta3 || ''
+        })
 
-    alert('Nota actualizada correctamente')
-    this.notaSeleccionada = null
-    this.informacionRelacionada= ''
-    this.cargarNotas()
-  } catch (err) {
-    console.error('Error al actualizar nota:', err)
-    alert('Error al actualizar la nota')
-  }
-},
-
-
+        alert('Nota actualizada correctamente')
+        this.notaSeleccionada = null
+        this.informacionRelacionada = ''
+        this.cargarNotas()
+      } catch (err) {
+        console.error('Error al actualizar nota:', err)
+        alert('Error al actualizar la nota')
+      }
+    },
 
     iniciarTemporizador() {
       if (this.temporizador) clearTimeout(this.temporizador)
@@ -399,50 +398,49 @@ async actualizarNota() {
     },
     async cargarNotas() {
       try {
-        const res = await axios.get('http://localhost:8000/notas/')
+        const res = await axios.get(`${this.backendUrl}/notas/`)
         this.notas = res.data
       } catch (error) {
         console.error('Error al cargar notas:', error)
       }
     },
-nueva() {
-  this.mod = true
-  this.notaSeleccionada = null
-  this.busqueda=null
-},
-buscar() {
-if (this.busqueda) {
-  this.busqueda = false
-  this.filtros = {
-    titulo: '',
-    descripcion: '',
-    ia: '',
-    etiquetasSeleccionadas: [],
-  }
-} else {
-  this.busqueda = true
-  this.mod = null
-}
-
-},
-async eliminar(nota) {
-  console.log('ID a eliminar:', nota.id)
-  const confirmar = confirm(`¿Eliminar la idea "${nota.titulo}"?`)
-  if (!confirmar) return
-
-  try {
-    await axios.delete(`http://localhost:8000/eliminar_nota/${nota.id}`)
-    this.cargarNotas()
-    if (this.notaSeleccionada?.id === nota.id) {
+    nueva() {
+      this.mod = true
       this.notaSeleccionada = null
-    }
-  } catch (error) {
-    console.error('Error al eliminar la nota:', error)
-    alert('No se pudo eliminar la idea.')
-  }
-},
+      this.busqueda = null
+    },
+    buscar() {
+      if (this.busqueda) {
+        this.busqueda = false
+        this.filtros = {
+          titulo: '',
+          descripcion: '',
+          ia: '',
+          etiquetasSeleccionadas: [],
+        }
+      } else {
+        this.busqueda = true
+        this.mod = null
+      }
+    },
+    async eliminar(nota) {
+      console.log('ID a eliminar:', nota.id)
+      const confirmar = confirm(`¿Eliminar la idea "${nota.titulo}"?`)
+      if (!confirmar) return
 
-     seleccionarNota(nota) {
+      try {
+        await axios.delete(`${this.backendUrl}/eliminar_nota/${nota.id}`)
+        this.cargarNotas()
+        if (this.notaSeleccionada?.id === nota.id) {
+          this.notaSeleccionada = null
+        }
+      } catch (error) {
+        console.error('Error al eliminar la nota:', error)
+        alert('No se pudo eliminar la idea.')
+      }
+    },
+
+    seleccionarNota(nota) {
       this.notaSeleccionada = { ...nota } // clona para evitar mutar directamente
     },
     async generarInformacionIA() {
@@ -464,7 +462,7 @@ async eliminar(nota) {
     Descripción: ${this.descripcion || "Ninguna"}`
 
       try {
-        const res = await axios.post('http://localhost:8000/preguntar_gemini/', {
+        const res = await axios.post(`${this.backendUrl}/preguntar_gemini/`, {
           mensaje: mensaje
         })
 
@@ -508,7 +506,7 @@ async eliminar(nota) {
     Descripción: ${nota.descripcion || "Ninguna"}`
 
       try {
-        const res = await axios.post('http://localhost:8000/preguntar_gemini/', {
+        const res = await axios.post(`${this.backendUrl}/preguntar_gemini/`, {
           mensaje: mensaje
         })
 
@@ -532,40 +530,38 @@ async eliminar(nota) {
       }
     }
   },
-    mounted() {
+  mounted() {
     this.cargarNotas()
   },
- computed: {
-  notasFiltradas() {
-    return this.notas.filter(nota => {
-      const coincideTitulo = nota.titulo.toLowerCase().includes(this.filtros.titulo.toLowerCase())
-      const coincideDescripcion = nota.descripcion.toLowerCase().includes(this.filtros.descripcion.toLowerCase())
-      const coincideIA = (nota.ia || '').toLowerCase().includes(this.filtros.ia.toLowerCase())
+  computed: {
+    notasFiltradas() {
+      return this.notas.filter(nota => {
+        const coincideTitulo = nota.titulo.toLowerCase().includes(this.filtros.titulo.toLowerCase())
+        const coincideDescripcion = nota.descripcion.toLowerCase().includes(this.filtros.descripcion.toLowerCase())
+        const coincideIA = (nota.ia || '').toLowerCase().includes(this.filtros.ia.toLowerCase())
 
-      const etiquetasNota = [nota.etiqueta1, nota.etiqueta2, nota.etiqueta3]
-        .filter(Boolean)
-        .map(e => e.toLowerCase())
+        const etiquetasNota = [nota.etiqueta1, nota.etiqueta2, nota.etiqueta3]
+          .filter(Boolean)
+          .map(e => e.toLowerCase())
 
-      const etiquetasSeleccionadas = this.filtros.etiquetasSeleccionadas.map(e => e.toLowerCase())
+        const etiquetasSeleccionadas = this.filtros.etiquetasSeleccionadas.map(e => e.toLowerCase())
 
-      const coincideEtiquetas = etiquetasSeleccionadas.every(e => etiquetasNota.includes(e))
+        const coincideEtiquetas = etiquetasSeleccionadas.every(e => etiquetasNota.includes(e))
 
-      return coincideTitulo && coincideDescripcion && coincideIA && coincideEtiquetas
-    })
-  },
-  etiquetasUnicas() {
-    const etiquetas = new Set()
-    this.notas.forEach(nota => {
-      if (nota.etiqueta1) etiquetas.add(nota.etiqueta1)
-      if (nota.etiqueta2) etiquetas.add(nota.etiqueta2)
-      if (nota.etiqueta3) etiquetas.add(nota.etiqueta3)
-    })
-    return Array.from(etiquetas)
+        return coincideTitulo && coincideDescripcion && coincideIA && coincideEtiquetas
+      })
+    },
+    etiquetasUnicas() {
+      const etiquetas = new Set()
+      this.notas.forEach(nota => {
+        if (nota.etiqueta1) etiquetas.add(nota.etiqueta1)
+        if (nota.etiqueta2) etiquetas.add(nota.etiqueta2)
+        if (nota.etiqueta3) etiquetas.add(nota.etiqueta3)
+      })
+      return Array.from(etiquetas)
+    }
   }
 }
-
-}
-
 </script>
 <style scoped>
 /* Loader CSS simple: spinner */
