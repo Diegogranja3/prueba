@@ -54,6 +54,7 @@ Ejemplos de prompts:
 - Convierte esta seccion del codigo que funciona con un puerto localhost con la url del backend para hacerlo deployable
 - Genera el endpoint con fastapi y la llamada de axios al mismo para usar la ia de google
 - Genera un prompt para gemini en el que de la menor cantidad de informacion innecesaria
+- Revisa esta seccion de codigo y busca optimizarlo
 
 Reflexion:
 Definitivamente el uso de las IAs fueron indispensables para terminar este proyecto en menos de 15 horas, por su puesto que se puede mejorar,
